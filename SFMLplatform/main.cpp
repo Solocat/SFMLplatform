@@ -55,7 +55,13 @@ int main()
 	Player.anims[AnimState::FALL] = Animation(6, 0, 0.0);
 	Player.changeAnim(AnimState::IDLE);
 
+	sf::Sprite spr;
+	spr.setTexture(playerSprites.fullTex);
+	spr.setTextureRect(playerSprites.getRect(0));
+	spr.setOrigin(spr.getTextureRect().width / 2, spr.getTextureRect().height);
+	Player.sprite = spr;
 
+	//Player.sprite = playerSprites.sprite;
 
 	bool quit = false;
 

@@ -12,7 +12,8 @@ public:
 	Spritesheet(string _file, int _tileWidth, int _tileHeight);
 	~Spritesheet();
 	void makeSheet(string _file, int _tileWidth, int _tileHeight);	//load image and chop it into tiles of requested size
-	sf::Sprite* getSprite(unsigned i);
+	const sf::Sprite& getSprite(unsigned i);
+	sf::IntRect getRect(unsigned i);
 	//sf::Image rotateFrameCW(unsigned index, Window window);
 
 	sf::Texture fullTex; //whole image file

@@ -77,7 +77,7 @@ void Tilemap::update(const Window &window)
 	renderTexture.create(window.area.width, window.area.height);
 	renderTexture.clear();	
 
-	sf::Sprite* spr;
+	sf::Sprite spr;
 
 	//copy tiles to texture according to window offset
 	for (int i = 0; i <= window.area.height / tileRes; i++)
@@ -99,8 +99,8 @@ void Tilemap::update(const Window &window)
 			rect.width = rect.height = tileRes;
 
 			spr = sprites.getSprite(tiles[in]);
-			spr->setPosition(rect.left, rect.top);
-			renderTexture.draw(*spr);
+			spr.setPosition(rect.left, rect.top);
+			renderTexture.draw(spr);
 		}
 	}
 	

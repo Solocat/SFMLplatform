@@ -141,6 +141,7 @@ bool Character::move(double deltaTime, const Tilemap& map)
 	int targetDist = 0;
 	if (velocity.x < 0.0)
 	{
+		if (facingRight == true) sprite.setScale(-1.f, 1.f); //rotate sprite
 		facingRight = false;
 		position.x += fmax(velocity.x * deltaTime, -scanBoundary(Direction::LEFT, map));
 		if (hitbox.left != int(position.x - origin.x))
@@ -155,6 +156,7 @@ bool Character::move(double deltaTime, const Tilemap& map)
 	}
 	else if (velocity.x > 0.0)
 	{
+		if (facingRight == false) sprite.setScale(1.f, 1.f);
 		facingRight = true;
 		position.x += fmin(velocity.x * deltaTime, scanBoundary(Direction::RIGHT, map));
 		if (hitbox.left != int(position.x - origin.x))
@@ -299,15 +301,7 @@ double Character::scanBoundary(Direction direction, const Tilemap& map)
 
 void Character::render(Window& window)
 {
-	int x = hitbox.left - padding[0];
-	int y = hitbox.top - padding[1];
-	
-	sprite.setPosition(x, y);
-
-	if (!facingRight) 
-	{ 
-		//sprite.setScale(-1.f, 1.f); 
-	}
+	sprite.setPosition((int)position.x, (int)position.y);
 
 	window.win.draw(sprite);
 	sf::RectangleShape dot;
@@ -323,8 +317,7 @@ void Character::animate(double deltaTime)
 
 	if (currentFrame == oldFrame) return;
 
-	sprite = *sprites->getSprite(currentFrame);
-	//sprite.setOrigin(hitbox.width / 2, hitbox.height);
+	sprite.setTextureRect(sprites->getRect(currentFrame));
 }
 
 void Character::changeAnim(AnimState state)
@@ -335,7 +328,7 @@ void Character::changeAnim(AnimState state)
 	currentAnim = &anims[state];
 
 	currentFrame = currentAnim->startFrame;
-	sprite = *sprites->getSprite(currentFrame);
-	//sprite.setOrigin(hitbox.width / 2, hitbox.height);
+	sprite.setTextureRect(sprites->getRect(currentFrame));
+
 	frameCounter = 0.0;
 }
