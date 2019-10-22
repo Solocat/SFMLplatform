@@ -8,9 +8,9 @@ Spritesheet::Spritesheet()
 	tileHeight = 0;
 }
 
-Spritesheet::Spritesheet(string _file, int _tileWidth, int _tileHeight)
+Spritesheet::Spritesheet(string _file, int _tileWidth, int _tileHeight, bool alpha)
 {
-	makeSheet(_file, _tileWidth, _tileHeight);
+	makeSheet(_file, _tileWidth, _tileHeight, alpha);
 }
 
 Spritesheet::~Spritesheet()
@@ -18,14 +18,25 @@ Spritesheet::~Spritesheet()
 
 }
 
-void Spritesheet::makeSheet(string _file, int _tileWidth, int _tileHeight)
+void Spritesheet::makeSheet(string _file, int _tileWidth, int _tileHeight, bool alpha)
 {
 	tileWidth = _tileWidth;
 	tileHeight = _tileHeight;
 
 	cout << "Loading " << _file.c_str() << "... ";
 
-	if (!fullTex.loadFromFile(_file))
+	if (alpha)
+	{
+		sf::Image img;
+		if (!img.loadFromFile(_file))
+		{
+			cout << "Loading failed" << endl;
+			return;
+		}
+		img.createMaskFromColor(sf::Color::Black);
+		fullTex.loadFromImage(img);
+	}
+	else if (!fullTex.loadFromFile(_file))
 	{
 		cout << "Loading failed" << endl;
 		return;

@@ -17,7 +17,7 @@ int main()
 {
 	mainWindow.init("Platform", SCREEN_WIDTH, SCREEN_HEIGHT, 120);
 
-	Spritesheet levelSprites("testpic.png", 32, 32);
+	Spritesheet levelSprites("testpic.png", 32, 32, false);
 	gameMap.sprites = levelSprites;
 	gameMap.loadFile("tornila.map");
 	gameMap.update(mainWindow);
@@ -25,43 +25,27 @@ int main()
 
 
 	Character Player;
-	Player.gravity = 5000.0;
+	Player.gravity = 3000.0;
 	Player.runSpeed = 10 * TileRes;
-	Player.jumpVelocity = 25 * TileRes;
+	Player.jumpVelocity = 22 * TileRes;
 	Player.jumpTimeMax = 0.14;
-	Player.terminalVelocity = 30 * TileRes;
+	Player.terminalVelocity = 22 * TileRes;
 
 	//minjump = 0.5(jumpVelocity^2/gravity)	= 64 = 2 blocks
 	//maxjump = 0.5(jumpVelocity^2/gravity) + jumpVelocity*jumpTimeMax	= 176 = 5.5 blocks
 
-	Player.hitbox.width = TileRes;
-	Player.hitbox.height = 52;
-	Player.origin.x = (double)(Player.hitbox.width / 2);
-	Player.origin.y = (double)Player.hitbox.height;
+	Player.setHitbox(TileRes, 52);
 
-	Player.padding[0] = 8;
-	Player.padding[1] = 12;
-	Player.padding[2] = 8;
-	Player.padding[3] = 0;
-
-	Player.moveTo(112, SCREEN_HEIGHT - 128);
-
-	Spritesheet playerSprites("runnyC.png", 48, 64);
-	Player.sprites = &playerSprites;
+	Spritesheet playerSprites("runnyC.png", 48, 64, true);
+	Player.setSpritesheet(&playerSprites);
 
 	Player.anims[AnimState::IDLE] = Animation(7, 0, 0.0);
 	Player.anims[AnimState::MOVE] = Animation(0, 8, 0.01875);
 	Player.anims[AnimState::JUMP] = Animation(1, 0, 0.0);
 	Player.anims[AnimState::FALL] = Animation(6, 0, 0.0);
 	Player.changeAnim(AnimState::IDLE);
-
-	sf::Sprite spr;
-	spr.setTexture(playerSprites.fullTex);
-	spr.setTextureRect(playerSprites.getRect(0));
-	spr.setOrigin(spr.getTextureRect().width / 2, spr.getTextureRect().height);
-	Player.sprite = spr;
-
-	//Player.sprite = playerSprites.sprite;
+	
+	Player.moveTo(112, SCREEN_HEIGHT - 128);
 
 	bool quit = false;
 
@@ -127,6 +111,7 @@ int main()
 			}
 		}
 
+		//movement block
 		if (!Player.freeFall)
 		{
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) || sf::Keyboard::isKeyPressed(sf::Keyboard::W))

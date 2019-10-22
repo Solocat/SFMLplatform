@@ -20,8 +20,8 @@ Character::Character()
 	jumpVelocity = 0.0;
 	startJumpVector = 0.0;
 	terminalVelocity = 0.0;
-	position.x = 0.0;
-	position.y = 0.0;
+	//position.x = 0.0;
+	//position.y = 0.0;
 	origin.x = 0.0;
 	origin.y = 0.0;
 	hitbox.left = 0;
@@ -33,11 +33,24 @@ Character::Character()
 	airSpeed = 0.0;
 	jumpTimeMax = 0.0;
 	sprites = nullptr;
+}
 
-	for (int i = 0; i < 4; i++)
-	{
-		padding[i] = 0;
-	}
+void Character::setSpritesheet(Spritesheet* sheet)
+{
+	sprites = sheet;
+	sf::Sprite spr;
+	spr.setTexture(sheet->fullTex);
+	spr.setTextureRect(sheet->getRect(0));
+	spr.setOrigin(spr.getTextureRect().width / 2, spr.getTextureRect().height);
+	sprite = spr;
+}
+
+void Character::setHitbox(unsigned w, unsigned h)
+{
+	hitbox.width = w;
+	hitbox.height = h;
+	origin.x = (double)(w / 2);
+	origin.y = (double)h;
 }
 
 bool Character::move(double deltaTime, const Tilemap& map)
@@ -181,8 +194,8 @@ void Character::moveTo(double x, double y)
 {
 	position.x = x;
 	position.y = y;
-	hitbox.left = int(position.x - origin.x);
-	hitbox.top = int(position.y - origin.y);
+	hitbox.left = int(x - origin.x);
+	hitbox.top = int(y - origin.y);
 }
 
 void Character::jumpivate()
@@ -302,10 +315,7 @@ double Character::scanBoundary(Direction direction, const Tilemap& map)
 void Character::render(Window& window)
 {
 	sprite.setPosition((int)position.x, (int)position.y);
-
 	window.win.draw(sprite);
-	sf::RectangleShape dot;
-	cout << sprite.getPosition().x << endl;
 }
 
 void Character::animate(double deltaTime)

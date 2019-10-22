@@ -9,9 +9,9 @@ class Spritesheet
 {
 public:
 	Spritesheet();
-	Spritesheet(string _file, int _tileWidth, int _tileHeight);
+	Spritesheet(string _file, int _tileWidth, int _tileHeight, bool alpha);
 	~Spritesheet();
-	void makeSheet(string _file, int _tileWidth, int _tileHeight);	//load image and chop it into tiles of requested size
+	void makeSheet(string _file, int _tileWidth, int _tileHeight, bool alpha);	//load image and chop it into tiles of requested size
 	const sf::Sprite& getSprite(unsigned i);
 	sf::IntRect getRect(unsigned i);
 	//sf::Image rotateFrameCW(unsigned index, Window window);

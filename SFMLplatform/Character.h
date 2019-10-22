@@ -39,6 +39,8 @@ class Character
 {
 public:
 	Character();
+	void setSpritesheet(Spritesheet* sheet);
+	void setHitbox(unsigned w, unsigned h);
 	bool move(double deltaTime, const Tilemap& map);	//returns: whether character's rectangle has moved
 	void moveTo(double x, double y);
 	void jumpivate();
@@ -65,11 +67,10 @@ public:
 	double jumpTimeMax;
 	double startJumpVector;
 	double terminalVelocity;
-	doubleVector position;
-	doubleVector origin;
+	doubleVector position; //world position. sprite's position must be int
+	doubleVector origin; //the local origin of the hitbox
 
 	sf::IntRect hitbox;
-	unsigned padding[4];
 
 	bool airBorne;
 	bool freeFall;
