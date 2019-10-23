@@ -9,17 +9,15 @@ using namespace std;
 class Window
 {
 public:
-	Window();
-	~Window();
-	bool init(string _title, int _width, int _height, int _fps);
-	void handleEvents();
-	void follow(int x, int y, int mapWidth, int mapHeight);
+	Window(string _title, int _width, int _height, int fps);
+	void follow(int x, int y, sf::Vector2i bounds, unsigned margin);
+
+	sf::IntRect getArea() const;
 
 	string title;
 
 	sf::RenderWindow win;
-	sf::IntRect area;
-	sf::IntRect worldArea;
+	sf::View camera;
 	int fps;
 
 	bool mouseFocus;

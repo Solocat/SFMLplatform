@@ -10,42 +10,37 @@ using namespace std::chrono;
 const int TileRes = 32;
 const int SCREEN_WIDTH = 32 * TileRes;
 const int SCREEN_HEIGHT = 18 * TileRes;
-Window mainWindow;
-Tilemap gameMap;
 
 int main()
 {
-	mainWindow.init("Platform", SCREEN_WIDTH, SCREEN_HEIGHT, 120);
+	Window mainWindow("Platform", SCREEN_WIDTH, SCREEN_HEIGHT, 120);
 
-	Spritesheet levelSprites("testpic.png", 32, 32, false);
-	gameMap.sprites = levelSprites;
+	Tilemap gameMap;
+	gameMap.sprites = Spritesheet("testpic.png", 32, 32, false);
 	gameMap.loadFile("tornila.map");
 	gameMap.update(mainWindow);
 	gameMap.renderTex.create(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 
-	Character Player;
-	Player.gravity = 3000.0;
-	Player.runSpeed = 10 * TileRes;
-	Player.jumpVelocity = 22 * TileRes;
-	Player.jumpTimeMax = 0.14;
-	Player.terminalVelocity = 22 * TileRes;
+	Character player;
+	player.gravity = 3000.0;
+	player.runSpeed = 10 * TileRes;
+	player.jumpVelocity = 22 * TileRes;
+	player.jumpTimeMax = 0.14;
+	player.terminalVelocity = 22 * TileRes;
 
-	//minjump = 0.5(jumpVelocity^2/gravity)	= 64 = 2 blocks
-	//maxjump = 0.5(jumpVelocity^2/gravity) + jumpVelocity*jumpTimeMax	= 176 = 5.5 blocks
-
-	Player.setHitbox(TileRes, 52);
+	player.setHitbox(TileRes, 52);
 
 	Spritesheet playerSprites("runnyC.png", 48, 64, true);
-	Player.setSpritesheet(&playerSprites);
+	player.setSpritesheet(&playerSprites);
 
-	Player.anims[AnimState::IDLE] = Animation(7, 0, 0.0);
-	Player.anims[AnimState::MOVE] = Animation(0, 8, 0.01875);
-	Player.anims[AnimState::JUMP] = Animation(1, 0, 0.0);
-	Player.anims[AnimState::FALL] = Animation(6, 0, 0.0);
-	Player.changeAnim(AnimState::IDLE);
+	player.anims[AnimState::IDLE] = Animation(7, 0, 0.0);
+	player.anims[AnimState::MOVE] = Animation(0, 8, 0.01875);
+	player.anims[AnimState::JUMP] = Animation(1, 0, 0.0);
+	player.anims[AnimState::FALL] = Animation(6, 0, 0.0);
+	player.changeAnim(AnimState::IDLE);
 	
-	Player.moveTo(112, SCREEN_HEIGHT - 128);
+	player.moveTo(112, SCREEN_HEIGHT - 128);
 
 	bool quit = false;
 
@@ -72,13 +67,13 @@ int main()
 				case sf::Keyboard::A:
 				case sf::Keyboard::Left:
 				{
-					Player.velocity.x = -Player.runSpeed;
+					player.velocity.x = -player.runSpeed;
 					break;
 				}
 				case sf::Keyboard::D:
 				case sf::Keyboard::Right:
 				{
-					Player.velocity.x = Player.runSpeed;
+					player.velocity.x = player.runSpeed;
 					break;
 				}
 				default: break;
@@ -92,15 +87,15 @@ int main()
 				case sf::Keyboard::A:
 				case sf::Keyboard::Left:
 				{
-					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) || sf::Keyboard::isKeyPressed(sf::Keyboard::D)) Player.velocity.x = Player.runSpeed;
-					else Player.velocity.x = 0.0;
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) || sf::Keyboard::isKeyPressed(sf::Keyboard::D)) player.velocity.x = player.runSpeed;
+					else player.velocity.x = 0.0;
 					break;
 				}
 				case sf::Keyboard::D:
 				case sf::Keyboard::Right:
 				{
-					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::A)) Player.velocity.x = -Player.runSpeed;
-					else Player.velocity.x = 0.0;
+					if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::A)) player.velocity.x = -player.runSpeed;
+					else player.velocity.x = 0.0;
 					break;
 				}
 				default: break;
@@ -112,31 +107,31 @@ int main()
 		}
 
 		//movement block
-		if (!Player.freeFall)
+		if (!player.freeFall)
 		{
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) || sf::Keyboard::isKeyPressed(sf::Keyboard::W))
 			{
-				Player.jumpivate();
+				player.jumpivate();
 			}
-			else if (Player.airBorne)
+			else if (player.airBorne)
 			{
-				Player.freeFall = true;
+				player.freeFall = true;
 			}
 		}
 
-		if (Player.move(frameTime.asSeconds(), gameMap))
+		if (player.move(frameTime.asSeconds(), gameMap))
 		{
-			mainWindow.follow((int)Player.position.x, (int)Player.position.y, gameMap.horiTiles * gameMap.tileRes, gameMap.vertiTiles * gameMap.tileRes);
+			mainWindow.follow((int)player.position.x, (int)player.position.y, gameMap.resolution, 4*TileRes);
 			gameMap.update(mainWindow);
 		}
-		Player.animate(frameTime.asSeconds());
+		player.animate(frameTime.asSeconds());
 
 		//rendering block
 		mainWindow.win.clear();
 
 		gameMap.render(mainWindow);
 
-		Player.render(mainWindow);
+		player.render(mainWindow);
 		mainWindow.win.display();
 	}
 }

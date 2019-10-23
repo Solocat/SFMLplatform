@@ -51,6 +51,8 @@ void Tilemap::loadFile(const string &_file)
 	}
 
 	file.close();
+
+	resolution = sf::Vector2i(tileRes * horiTiles, tileRes * vertiTiles);
 }
 
 void Tilemap::saveFile(const string &_file)
@@ -78,21 +80,23 @@ void Tilemap::update(const Window &window)
 	sf::Sprite spr;
 	spr.setTexture(sprites.fullTex);
 
+	sf::IntRect area = window.getArea();
+
 	//copy tiles to texture according to window offset
-	for (int i = 0; i <= window.area.height / tileRes; i++)
+	for (int i = 0; i <= area.height / tileRes; i++)
 	{
-		int y = i + window.worldArea.top / tileRes;
+		int y = i + area.top / tileRes;
 		if (y < 0 || y >= vertiTiles) continue;
-		for (int j = 0; j <= window.area.width / tileRes; j++)
+		for (int j = 0; j <= area.width / tileRes; j++)
 		{
-			int x = j + window.worldArea.left / tileRes;
+			int x = j + area.left / tileRes;
 
 			if (x < 0 || x >= horiTiles) continue;
 
 			int in = y*horiTiles + x;
 			
-			int top = i * tileRes - window.worldArea.top % tileRes;
-			int left = j * tileRes - window.worldArea.left % tileRes;
+			int top = i * tileRes - area.top % tileRes;
+			int left = j * tileRes - area.left % tileRes;
 
 			spr.setTextureRect(sprites.getRect(tiles[in]));
 			spr.setPosition(left, top);
@@ -105,9 +109,11 @@ void Tilemap::render(Window &window)
 {
 	renderTex.display();
 
+	sf::IntRect area = window.getArea();
+
 	sf::Sprite sprite;
 	sprite.setTexture(renderTex.getTexture());
-	sprite.setPosition(window.worldArea.left, window.worldArea.top);
+	sprite.setPosition(area.left, area.top);
 	window.win.draw(sprite);
 }
 

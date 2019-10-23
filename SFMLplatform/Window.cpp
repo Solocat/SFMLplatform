@@ -1,119 +1,68 @@
 #include "Window.h"
 
-Window::Window()
+Window::Window(string _title, int _width, int _height, int fps)
 {
-	area.left = 0;
-	area.top = 0;
-	area.width = 0;
-	area.height = 0;
 	mouseFocus = false;
 	keyFocus = false;
-}
-Window::~Window()
-{
-}
-bool Window::init(string _title, int _width, int _height, int fps)
-{
-	title = _title;
-	area.width = _width;
-	area.height = _height;
+	fps = 0;
 
-	win.create(sf::VideoMode(area.width, area.height), _title);
+	title = _title;
+
+	win.create(sf::VideoMode(_width, _height), _title);
 	if (fps > 0) win.setFramerateLimit(fps);
 
-	return true;
+	camera = win.getDefaultView();
 }
 
-void Window::handleEvents()
+void Window::follow(int x, int y, sf::Vector2i bounds, unsigned margin) //player is offcenter
 {
-	/*sf::Event event;
+	sf::Vector2i size = (sf::Vector2i)camera.getSize();
+	sf::Vector2i center = (sf::Vector2i)camera.getCenter();
 
-	while (win.pollEvent(event)) 
+	sf::Vector2i halfSize = size / 2;
+
+	int xMin = x - margin;
+	int xMax = x + margin;
+	int yMin = y - margin;
+	int yMax = y + margin;
+	int xMaxMax = bounds.x - halfSize.x;
+	int yMaxMax = bounds.y - halfSize.y;
+	
+	//way 1
+	if (center.x < xMin) center.x = xMin;
+	else if (center.x > xMax) center.x = xMax; 
+
+	if (center.x < halfSize.x) center.x = halfSize.x;
+	else if (center.x > xMaxMax) center.x = xMaxMax;
+
+	//way 2
+	/*xMin = max(xMin, halfSize.x);
+	xMax = min(xMax, xMaxMax);
+	if (xMin < xMax)
 	{
-		switch (event.type)
-		{
-		case SDL_WINDOWEVENT_ENTER:
-			SDL_RaiseWindow(win);
-			mouseFocus = true;
-			break;
-		case SDL_WINDOWEVENT_LEAVE:
-			mouseFocus = false;
-			break;
-		case SDL_WINDOWEVENT_FOCUS_GAINED:
-			keyFocus = true;
-			break;
-		case SDL_WINDOWEVENT_FOCUS_LOST:
-			keyFocus = false;
-			break;
-		case SDL_WINDOWEVENT_CLOSE:
-			//quit = true; 
-			break;
-		}
+		if (center.x < xMin) center.x = xMin;
+		else if (center.x > xMax) center.x = xMax;
 	}*/
 	
+	if (center.y < yMin) center.y = yMin;
+	else if (center.y > yMax) center.y = yMax;
+
+	if (center.y < halfSize.y) center.y = halfSize.y;
+	else if (center.y > yMaxMax) center.y = yMaxMax;
+
+	camera.setCenter(sf::Vector2f(center));
+	win.setView(camera);
 }
 
-void Window::follow(int x, int y, int mapWidth, int mapHeight)
+sf::IntRect Window::getArea() const
 {
-	static const int safeMargin = 128;
+	sf::Vector2i size = (sf::Vector2i)camera.getSize();
+	sf::Vector2i center = (sf::Vector2i)camera.getCenter();
 
-	int targetX = x - (area.width / 2);
-	int targetY = y - (area.height / 2);
-
-	int offsetX = 0, offsetY = 0;
-
-	int bound = targetX - safeMargin;
-	if (offsetX < bound)
-	{
-		offsetX = bound;
-	}
-	else
-	{
-		bound = targetX + safeMargin;
-		offsetX = offsetX < bound ? offsetX : bound;
-	}
-
-	bound = targetY - safeMargin;
-	if (offsetY < bound)
-	{
-		offsetY = bound;
-	}
-	else
-	{
-		bound = targetY + safeMargin;
-		offsetY = offsetY < bound ? offsetY : bound;
-	}
-
-	if (offsetX < 0)
-	{
-		offsetX = 0;
-	}
-	else
-	{
-		bound = mapWidth - area.width;
-		offsetX = offsetX < bound ? offsetX : bound;
-	}
-
-	if (offsetY < 0)
-	{
-		offsetY = 0;
-	}
-	else
-	{
-		bound = mapHeight - area.height;
-		offsetY = offsetY < bound ? offsetY : bound;
-	}
-
-	sf::View view = win.getDefaultView();
-	sf::Vector2f center((area.width / 2) + offsetX, (area.height / 2) + offsetY);
-
-	view.setCenter(center);
-	win.setView(view);
-
-	worldArea = sf::IntRect{
-		(int)center.x - (area.width / 2),
-		(int)center.y - (area.height / 2),
-		area.width,
-		area.height
+	return sf::IntRect{
+		center.x - (size.x / 2),
+		center.y - (size.y / 2),
+		size.x,
+		size.y
 	};
 }

@@ -14,7 +14,9 @@ public:
 	Tilemap();
 	Tilemap(Spritesheet _sprites);
 	~Tilemap();
+	
 
+	sf::Vector2i resolution;
 	char tileRes;			//vertical and horizontal resolution of tiles
 	int vertiTiles;			//size of map in tiles
 	int horiTiles;
