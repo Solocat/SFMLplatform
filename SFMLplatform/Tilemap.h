@@ -20,7 +20,7 @@ public:
 	int horiTiles;
 	string bitMapName;		//which image the tile textures are fetched from
 	vector<char> tiles;		//type of tile
-	sf::Texture fullTex;	//texture to be rendered
+	sf::RenderTexture renderTex;
 	Spritesheet sprites;
 
 	void loadFile(const string &_file);

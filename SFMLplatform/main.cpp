@@ -21,7 +21,7 @@ int main()
 	gameMap.sprites = levelSprites;
 	gameMap.loadFile("tornila.map");
 	gameMap.update(mainWindow);
-
+	gameMap.renderTex.create(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 
 	Character Player;

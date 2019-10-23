@@ -73,11 +73,10 @@ void Tilemap::saveFile(const string &_file)
 
 void Tilemap::update(const Window &window)
 {		
-	sf::RenderTexture renderTexture;
-	renderTexture.create(window.area.width, window.area.height);
-	renderTexture.clear();	
+	renderTex.clear();
 
 	sf::Sprite spr;
+	spr.setTexture(sprites.fullTex);
 
 	//copy tiles to texture according to window offset
 	for (int i = 0; i <= window.area.height / tileRes; i++)
@@ -91,68 +90,23 @@ void Tilemap::update(const Window &window)
 			if (x < 0 || x >= horiTiles) continue;
 
 			int in = y*horiTiles + x;
+			
+			int top = i * tileRes - window.worldArea.top % tileRes;
+			int left = j * tileRes - window.worldArea.left % tileRes;
 
-			sf::IntRect rect;
-			rect.top = i * tileRes - window.worldArea.top % tileRes;
-			rect.left = j * tileRes - window.worldArea.left % tileRes;
-
-			rect.width = rect.height = tileRes;
-
-			spr = sprites.getSprite(tiles[in]);
-			spr.setPosition(rect.left, rect.top);
-			renderTexture.draw(spr);
+			spr.setTextureRect(sprites.getRect(tiles[in]));
+			spr.setPosition(left, top);
+			renderTex.draw(spr);
 		}
 	}
-	
-	renderTexture.display();
-	fullTex = renderTexture.getTexture();
 }
-
-/*void Tilemap::update(const Window& window)
-{
-	sf::RenderTexture renderTexture;
-	renderTexture.create(window.area.width, window.area.height);
-	renderTexture.clear();
-
-	//copy tiles to texture according to window offset
-	for (int i = 0; i <= window.area.height / tileRes; i++)
-	{
-		//int y = i + (window.offsetY/tileRes);
-		int y = i + window.worldArea.top / tileRes;
-		if (y < 0 || y >= vertiTiles) continue;
-		for (int j = 0; j <= window.area.width / tileRes; j++)
-		{
-			//int x = j + (window.offsetX/tileRes);
-			int x = j + window.worldArea.left / tileRes;
-
-			if (x < 0 || x >= horiTiles) continue;
-
-			int in = y * horiTiles + x;
-
-			sf::IntRect rect;
-			//rect.top = i*tileRes - window.offsetY%tileRes;
-			//rect.left = j*tileRes - window.offsetX%tileRes;
-
-			rect.top = i * tileRes - window.worldArea.top % tileRes;
-			rect.left = j * tileRes - window.worldArea.left % tileRes;
-
-			rect.width = rect.height = tileRes;
-
-			sf::Sprite spr = *sprites.getSprite(tiles[in]);
-			spr.setPosition(rect.left, rect.top);
-			renderTexture.draw(spr);
-		}
-	}
-
-	renderTexture.display();
-	fullTex = renderTexture.getTexture();
-}*/
-
 
 void Tilemap::render(Window &window)
 {
+	renderTex.display();
+
 	sf::Sprite sprite;
-	sprite.setTexture(fullTex);
+	sprite.setTexture(renderTex.getTexture());
 	sprite.setPosition(window.worldArea.left, window.worldArea.top);
 	window.win.draw(sprite);
 }
